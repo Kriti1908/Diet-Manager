@@ -1,0 +1,20 @@
+@startuml uc2
+actor User
+participant "System" as System
+
+User -> System : Select option to add composite food
+activate System
+
+System --> User : Display list of available food items
+User -> System : Select multiple food items and servings
+activate System
+
+System -> System : Calculate total caloric value
+System --> User : Prompt for identifier and keywords
+User -> System : Provide details
+System -> System : Save composite food to database
+System --> User : Confirm successful addition
+deactivate System
+deactivate System
+
+@enduml

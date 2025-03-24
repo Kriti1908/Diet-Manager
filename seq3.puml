@@ -1,0 +1,19 @@
+@startuml uc6
+actor User
+participant "System" as System
+
+User -> System : Select "View Log" option
+activate System
+
+System --> User : Display logged food entries for selected date
+User -> System : Select an entry to update
+activate System
+
+System --> User : Present selected entry for modification
+User -> System : Modify food item or servings
+System -> System : Update log entry
+System --> User : Confirm update
+deactivate System
+deactivate System
+
+@enduml

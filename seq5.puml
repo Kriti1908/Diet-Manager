@@ -1,0 +1,25 @@
+@startuml uc9
+actor User
+participant "System" as System
+participant "Food Log" as Log
+participant "Calorie Target" as Target
+
+User -> System : Request calorie comparison
+activate System
+
+System -> Log : Retrieve total calories consumed
+activate Log
+
+Log --> System : Return total consumed calories
+System -> Target : Fetch target calorie intake
+activate Target
+
+Target --> System : Return target calories
+System -> System : Compare consumed vs. target calories
+System --> User : Display comparison results:
+note right: Includes total consumed calories,\ntarget intake, and difference
+deactivate Target
+deactivate Log
+deactivate System
+
+@enduml

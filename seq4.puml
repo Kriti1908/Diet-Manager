@@ -1,0 +1,18 @@
+@startuml uc8
+actor System
+participant "User Profile" as Profile
+participant "Calorie Calculation" as Calculator
+
+System -> Profile : Retrieve user profile data
+activate Profile
+
+Profile --> System : Return profile information
+System -> Calculator : Calculate target calorie intake
+activate Calculator
+
+Calculator --> System : Compute recommended intake
+System --> System : Display calculated intake
+deactivate Calculator
+deactivate Profile
+
+@enduml

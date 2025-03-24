@@ -1,0 +1,32 @@
+@startuml uc3and4
+actor User
+participant "System" as System
+database "Database" as DB
+
+title Database Saving Scenarios
+
+== Manual Database Save ==
+User -> System : Select "Save Database" option
+activate System
+
+System -> DB : Write current database state to file
+activate DB
+
+DB --> System : Confirm save operation
+System --> User : Confirm successful saving
+deactivate DB
+deactivate System
+
+== Automatic Save on Program Termination ==
+System -> System : Detect program termination
+activate System
+
+System -> DB : Save current database state
+activate DB
+
+DB --> System : Confirm database saved
+System -> System : Complete shutdown process
+deactivate DB
+deactivate System
+
+@enduml
