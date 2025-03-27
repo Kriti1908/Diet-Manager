@@ -1,0 +1,1 @@
+krit,11821602066115086142,1,Female,158,60,19,Sedentary,Harris-Benedict

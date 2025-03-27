@@ -1,0 +1,69 @@
+modules = ["cpp", "python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "compile_and_run_diet_manager"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Test_Diet_Manager"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "YADA_Test"
+
+[[workflows.workflow]]
+name = "compile_and_run_diet_manager"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "g++ -std=c++17 main.cpp command.cpp dailyLog.cpp dietManager.cpp dietProfile.cpp food.cpp foodDatabase.cpp user.cpp userManager.cpp utils.cpp -o yada && ./yada"
+
+[[workflows.workflow]]
+name = "Test_Diet_Manager"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "g++ -std=c++17 main.cpp command.cpp dailyLog.cpp dietManager.cpp dietProfile.cpp food.cpp foodDatabase.cpp user.cpp userManager.cpp utils.cpp -o test_diet_manager && ./test_diet_manager"
+
+[[workflows.workflow]]
+name = "YADA_Test"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "g++ -std=c++17 main.cpp command.cpp dailyLog.cpp dietManager.cpp dietProfile.cpp food.cpp foodDatabase.cpp user.cpp userManager.cpp utils.cpp -o yada_test && ./yada_test"
+
+[deployment]
+run = ["sh", "-c", "g++ *.cpp -o yada -std=c++17 && ./yada"]
