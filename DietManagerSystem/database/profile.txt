@@ -1,0 +1,8 @@
+#YADA User Profile
+#Thu Mar 28 13:25:00 UTC 2024
+gender=female
+height=165.0
+weight=60.0
+age=30
+activityLevel=moderate
+calorieCalculationMethod=Harris-Benedict

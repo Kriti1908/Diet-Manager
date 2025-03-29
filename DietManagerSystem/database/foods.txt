@@ -1,0 +1,23 @@
+CompositeFood|PB&J Sandwich|sandwich,peanut butter,jelly|Whole Wheat Bread:2.0,Peanut Butter:2.0
+BasicFood|Peanut Butter|peanut,spread,protein|94.0
+BasicFood|White Rice|rice,grain,carb|130.0
+BasicFood|Egg|egg,protein|72.0
+BasicFood|Salmon|fish,seafood,protein,omega|208.0
+BasicFood|Whole Wheat Bread|bread,grain,wheat|69.0
+BasicFood|Olive Oil|oil,fat|119.0
+BasicFood|Brown Rice|rice,grain,carb|111.0
+BasicFood|Milk (1%)|milk,dairy,beverage|42.0
+BasicFood|Tomato|tomato,vegetable,fresh|22.0
+BasicFood|Orange|orange,fruit,citrus,fresh|47.0
+BasicFood|Banana|banana,fruit,fresh|89.0
+BasicFood|White Bread|bread,grain,white|79.0
+BasicFood|Apple|apple,fruit,fresh|52.0
+BasicFood|Broccoli|vegetable,green|55.0
+CompositeFood|Egg salmon|egg,salmon,sea food|Egg:1.0,Salmon:1.0
+BasicFood|Yogurt (plain)|yogurt,dairy|59.0
+BasicFood|Black Beans|beans,legume,protein|132.0
+BasicFood|Pasta|pasta,carb,grain|158.0
+BasicFood|Strawberry Jam|jam,strawberry,spread,sweet|56.0
+BasicFood|Spinach|vegetable,green,leaf|23.0
+BasicFood|Chicken Breast|chicken,meat,protein|165.0
+BasicFood|Cheddar Cheese|cheese,dairy|114.0
