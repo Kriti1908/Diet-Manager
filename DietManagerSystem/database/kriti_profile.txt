@@ -1,0 +1,8 @@
+#YADA User Profile for kriti
+#Fri Mar 28 17:06:35 IST 2025
+activityLevel=sedentary
+age=19
+calorieCalculationMethod=Harris-Benedict
+gender=female
+height=158.0
+weight=60.0
