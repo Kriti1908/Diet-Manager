@@ -1,7 +1,0 @@
-# YADA Daily Log - Format: DATE|YYYY-MM-DD|[Gender|Height|Weight|Age|ActivityLevel]
-DATE|2023-04-01|male|180|75|30|moderate
-Apple|2
-Banana|1
-PB&J Sandwich|1
-Chicken Breast|1
-DATE|2025-03-27|Female|158|60|19|Sedentary
