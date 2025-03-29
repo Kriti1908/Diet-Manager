@@ -239,8 +239,8 @@ public class MainWindow extends JFrame {
 
         System.out.println(profile.getUsername());
 
-        summaryPanel.add(createBoldLabel("Username:"));
-        summaryPanel.add(new JLabel(profile.getUsername()));
+        // summaryPanel.add(createBoldLabel("Username:"));
+        // summaryPanel.add(new JLabel(profile.getUsername()));
         
         summaryPanel.add(createBoldLabel("Gender:"));
         summaryPanel.add(new JLabel(profile.getGender()));
