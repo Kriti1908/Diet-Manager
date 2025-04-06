@@ -128,6 +128,7 @@ public class UserProfile {
             calorieCalculationMethod = properties.getProperty("calorieCalculationMethod", calorieCalculationMethod);
             
             System.out.println("Successfully loaded profile for " + username);
+            System.out.println("Successfully loaded profile for " + username);
         } catch (IOException e) {
             System.err.println("Error loading profile for " + username + ": " + e.getMessage());
         } catch (NumberFormatException e) {

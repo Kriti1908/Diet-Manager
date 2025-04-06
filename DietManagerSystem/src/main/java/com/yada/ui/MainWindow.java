@@ -369,6 +369,8 @@ public class MainWindow extends JFrame {
             
             // Refresh the profile panel with the updated user data
             tabbedPane.setComponentAt(2, createProfilePanel());
+            foodPanel.refreshFoods(null);  // Add this line to refresh food list
+
             
             // Also refresh the daily log panel in case it uses profile info
             dailyLogPanel.refreshLog();

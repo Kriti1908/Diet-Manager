@@ -1,0 +1,8 @@
+#YADA User Profile for Ananya
+#Sun Apr 06 18:43:28 IST 2025
+gender=female
+weight=50.0
+age=19
+activityLevel=moderate
+calorieCalculationMethod=Harris-Benedict
+height=163.0

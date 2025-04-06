@@ -24,6 +24,9 @@ public class DietManager {
     private Stack<Command> undoStack;
     private Stack<Command> redoStack;
     private User currentUser;
+
+
+    
     
     /**
      * Constructor for DietManager.
@@ -36,6 +39,11 @@ public class DietManager {
         undoStack = new Stack<>();
         redoStack = new Stack<>();
         currentUser = null;
+
+
+        // Debug output
+        System.out.println("Food database initialized with " + 
+            foodDatabase.getAllFoods().size() + " foods");
     }
     
     /**

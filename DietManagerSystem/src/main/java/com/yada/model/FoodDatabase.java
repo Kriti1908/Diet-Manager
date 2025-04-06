@@ -31,6 +31,7 @@ public class FoodDatabase {
      */
     private void load() {
         File file = new File(FOODS_FILE);
+        System.out.println("Looking for food file at: " + file.getAbsolutePath()); 
         if (!file.exists()) {
             return;
         }
