@@ -1,0 +1,8 @@
+#YADA User Profile for User2
+#Sun Apr 06 19:25:14 IST 2025
+gender=female
+weight=60.0
+age=20
+activityLevel=moderate
+calorieCalculationMethod=Harris-Benedict
+height=160.0

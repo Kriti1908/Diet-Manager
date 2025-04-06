@@ -35,10 +35,10 @@ public class UserProfile {
     public UserProfile() {
         // Default values
         this.username = null;
-        gender = "female";
-        height = 165.0;
-        weight = 60.0;
-        age = 30;
+        gender = "female/male";
+        height = 0.0;
+        weight = 0.0;
+        age = 0;
         activityLevel = "moderate";
         calorieCalculationMethod = "Harris-Benedict";
     }
