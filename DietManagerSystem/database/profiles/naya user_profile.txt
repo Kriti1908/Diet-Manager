@@ -1,0 +1,8 @@
+#YADA User Profile for naya user
+#Mon Apr 07 18:14:20 IST 2025
+activityLevel=very active
+age=45
+calorieCalculationMethod=Mifflin-St Jeor
+gender=male
+height=170.0
+weight=75.0

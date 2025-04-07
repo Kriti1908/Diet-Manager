@@ -12,6 +12,7 @@ public class RemoveFoodCommand implements Command {
     private DailyLog dailyLog;
     private LocalDate date;
     private LogEntry entry;
+    private String username;
     
     /**
      * Constructor for RemoveFoodCommand.
@@ -20,8 +21,9 @@ public class RemoveFoodCommand implements Command {
      * @param date The date
      * @param entry The log entry to remove
      */
-    public RemoveFoodCommand(DailyLog dailyLog, LocalDate date, LogEntry entry) {
+    public RemoveFoodCommand(DailyLog dailyLog, String username, LocalDate date, LogEntry entry) {
         this.dailyLog = dailyLog;
+        this.username = username;
         this.date = date;
         this.entry = entry;
     }
@@ -31,7 +33,7 @@ public class RemoveFoodCommand implements Command {
      */
     @Override
     public void execute() {
-        dailyLog.removeEntry(date, entry);
+        dailyLog.removeEntry(username, date, entry);
         dailyLog.save();
     }
     
@@ -40,7 +42,7 @@ public class RemoveFoodCommand implements Command {
      */
     @Override
     public void undo() {
-        dailyLog.addEntry(date, entry);
+        dailyLog.addEntry(username, date, entry);
         dailyLog.save();
     }
 }

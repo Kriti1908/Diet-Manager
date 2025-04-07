@@ -1,4 +1,4 @@
-CompositeFood|PB&J Sandwich|sandwich,peanut butter,jelly|Whole Wheat Bread:2.0,Peanut Butter:2.0
+CompositeFood|PB&J Sandwich|sandwich,peanut butter,jelly|
 BasicFood|Peanut Butter|peanut,spread,protein|94.0
 BasicFood|White Rice|rice,grain,carb|130.0
 BasicFood|Egg|egg,protein|72.0

@@ -15,6 +15,7 @@ public class AddFoodCommand implements Command {
     private Food food;
     private double servings;
     private LogEntry entry;
+    private String username;
     
     /**
      * Constructor for AddFoodCommand.
@@ -24,8 +25,9 @@ public class AddFoodCommand implements Command {
      * @param food The food to add
      * @param servings The number of servings
      */
-    public AddFoodCommand(DailyLog dailyLog, LocalDate date, Food food, double servings) {
+    public AddFoodCommand(DailyLog dailyLog, String username, LocalDate date, Food food, double servings) {
         this.dailyLog = dailyLog;
+        this.username = username;
         this.date = date;
         this.food = food;
         this.servings = servings;
@@ -37,7 +39,7 @@ public class AddFoodCommand implements Command {
     @Override
     public void execute() {
         entry = new LogEntry(food, servings);
-        dailyLog.addEntry(date, entry);
+        dailyLog.addEntry(username, date, entry);
         dailyLog.save();
     }
     
@@ -47,7 +49,7 @@ public class AddFoodCommand implements Command {
     @Override
     public void undo() {
         if (entry != null) {
-            dailyLog.removeEntry(date, entry);
+            dailyLog.removeEntry(username, date, entry);
             dailyLog.save();
         }
     }

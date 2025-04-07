@@ -171,36 +171,67 @@ public class DietManager {
     }
     
     /**
-     * Add a food to the daily log.
+     * Add a food to the daily log for the current user.
      * 
      * @param date The date
      * @param food The food
      * @param servings The number of servings
      */
     public void addFoodToLog(LocalDate date, Food food, double servings) {
-        Command command = new AddFoodCommand(dailyLog, date, food, servings);
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
+        }
+        String username = currentUser.getUsername();
+        Command command = new AddFoodCommand(dailyLog, username, date, food, servings);
         command.execute();
         undoStack.push(command);
-        // We don't clear redoStack to maintain unlimited redo operations
     }
     
     /**
-     * Remove a food from the daily log.
+     * Remove a food from the daily log for the current user.
      * 
      * @param date The date
      * @param index The index of the food to remove
      */
     public void removeFoodFromLog(LocalDate date, int index) {
-        List<LogEntry> entries = dailyLog.getEntriesForDate(date);
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
+        }
+        String username = currentUser.getUsername();
+        List<LogEntry> entries = dailyLog.getEntriesForUserAndDate(username, date); // Use user-specific method
         if (index < 0 || index >= entries.size()) {
             return;
         }
-        
+    
         LogEntry entry = entries.get(index);
-        Command command = new RemoveFoodCommand(dailyLog, date, entry);
+        Command command = new RemoveFoodCommand(dailyLog, username, date, entry); // Pass username
         command.execute();
         undoStack.push(command);
-        // We don't clear redoStack to maintain unlimited redo operations
+    }
+
+    /**
+     * Get the daily log entries for the current user and date.
+     * 
+     * @param date The date
+     * @return The list of log entries
+     */
+    public List<LogEntry> getDailyLogEntries(LocalDate date) {
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
+        }
+        return dailyLog.getEntriesForUserAndDate(currentUser.getUsername(), date);
+    }
+
+    /**
+     * Clear the daily log for the current user and date.
+     * 
+     * @param date The date
+     */
+    public void clearDailyLog(LocalDate date) {
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
+        }
+        dailyLog.clearEntriesForUserAndDate(currentUser.getUsername(), date); // Use user-specific method
     }
     
     /**
@@ -258,7 +289,10 @@ public class DietManager {
      * @return The calories consumed
      */
     public double getCaloriesConsumed(LocalDate date) {
-        List<LogEntry> entries = dailyLog.getEntriesForDate(date);
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
+        }
+        List<LogEntry> entries = dailyLog.getEntriesForUserAndDate(currentUser.getUsername(), date); // Use user-specific method
         double total = 0;
         for (LogEntry entry : entries) {
             total += entry.getCalories();

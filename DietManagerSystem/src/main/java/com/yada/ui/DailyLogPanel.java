@@ -163,13 +163,34 @@ public class DailyLogPanel extends JPanel {
     /**
      * Refresh the daily log display.
      */
-    public void refreshLog() {
+        public void refreshLog() {
+        // Check if a user is logged in
+        if (dietManager.getCurrentUser() == null) {
+            // No user is logged in, clear the table and show a message
+            tableModel.setRowCount(0);
+            tableModel.addRow(new Object[]{
+                "No user is logged in. Please log in to view your food log.",
+                "", 
+                ""
+            });
+    
+            // Update summary with zeros
+            caloriesConsumedLabel.setText("0.0");
+            targetCaloriesLabel.setText("0.0");
+            remainingCaloriesLabel.setText("0.0");
+            remainingCaloriesLabel.setForeground(Color.GRAY);
+    
+            // Disable remove button
+            removeFoodButton.setEnabled(false);
+            return;
+        }
+    
         LocalDate currentDate = mainWindow.getCurrentDate();
-        List<LogEntry> entries = dietManager.getDailyLog().getEntriesForDate(currentDate);
-        
+        List<LogEntry> entries = dietManager.getDailyLogEntries(currentDate);
+    
         // Update table
         tableModel.setRowCount(0);
-        
+    
         // If log is empty, show a message prompting user to add food
         if (entries.isEmpty()) {
             // Create an info row to prompt user
@@ -178,26 +199,26 @@ public class DailyLogPanel extends JPanel {
                 "", 
                 ""
             });
-            
+    
             // Update summary with zeros
             caloriesConsumedLabel.setText("0.0");
             targetCaloriesLabel.setText(String.format("%.1f", dietManager.getTargetCalories()));
             remainingCaloriesLabel.setText(String.format("%.1f", dietManager.getTargetCalories()));
             remainingCaloriesLabel.setForeground(Color.GREEN.darker());
-            
+    
             // Disable remove button when log is empty
             removeFoodButton.setEnabled(false);
-            
+    
             // Set table cell color for prompt row
             logTable.setDefaultRenderer(Object.class, new TableCellRenderer() {
                 private final DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-                
+    
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value, 
                         boolean isSelected, boolean hasFocus, int row, int column) {
                     Component c = renderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
-                    
+    
                     if (entries.isEmpty()) {
                         // Style the prompt row
                         c.setForeground(Color.GRAY);
@@ -217,15 +238,15 @@ public class DailyLogPanel extends JPanel {
                     entry.getCalories()
                 });
             }
-            
+    
             // Update summary with real values
             double caloriesConsumed = dietManager.getCaloriesConsumed(currentDate);
             double targetCalories = dietManager.getTargetCalories();
             double remainingCalories = dietManager.getRemainingCalories(currentDate);
-            
+    
             caloriesConsumedLabel.setText(String.format("%.1f", caloriesConsumed));
             targetCaloriesLabel.setText(String.format("%.1f", targetCalories));
-            
+    
             if (remainingCalories >= 0) {
                 remainingCaloriesLabel.setText(String.format("%.1f", remainingCalories));
                 remainingCaloriesLabel.setForeground(Color.GREEN.darker());
@@ -233,17 +254,17 @@ public class DailyLogPanel extends JPanel {
                 remainingCaloriesLabel.setText(String.format("%.1f (over)", -remainingCalories));
                 remainingCaloriesLabel.setForeground(Color.RED);
             }
-            
+    
             // Reset table renderer to show colors based on calories
             logTable.setDefaultRenderer(Object.class, new TableCellRenderer() {
                 private final DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-                
+    
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value, 
                         boolean isSelected, boolean hasFocus, int row, int column) {
                     Component c = renderer.getTableCellRendererComponent(
                             table, value, isSelected, hasFocus, row, column);
-                    
+    
                     if (column == 2 && row < entries.size()) {  // Calories column
                         Object cellValue = table.getValueAt(row, 2);
                         if (cellValue instanceof Double) {
@@ -279,7 +300,7 @@ public class DailyLogPanel extends JPanel {
                     return c;
                 }
             });
-            
+    
             // Enable remove button only if a row is selected
             removeFoodButton.setEnabled(logTable.getSelectedRow() != -1);
         }
@@ -397,18 +418,16 @@ public class DailyLogPanel extends JPanel {
     private void removeSelectedFood() {
         int selectedRow = logTable.getSelectedRow();
         if (selectedRow != -1) {
-            // Check if this is the prompt row (empty log)
-            List<LogEntry> entries = dietManager.getDailyLog().getEntriesForDate(mainWindow.getCurrentDate());
+            List<LogEntry> entries = dietManager.getDailyLogEntries(mainWindow.getCurrentDate()); // Use user-specific method
             if (entries.isEmpty()) {
-                // This is the prompt row, don't try to remove it
                 return;
             }
-            
+    
             int option = JOptionPane.showConfirmDialog(this, 
                     "Are you sure you want to remove this food from the log?", 
                     "Confirm Removal", 
                     JOptionPane.YES_NO_OPTION);
-            
+    
             if (option == JOptionPane.YES_OPTION) {
                 dietManager.removeFoodFromLog(mainWindow.getCurrentDate(), selectedRow);
                 refreshLog();
@@ -425,9 +444,9 @@ public class DailyLogPanel extends JPanel {
                 "Are you sure you want to clear the log for this date?", 
                 "Confirm Clear", 
                 JOptionPane.YES_NO_OPTION);
-        
+    
         if (option == JOptionPane.YES_OPTION) {
-            dietManager.getDailyLog().clearEntriesForDate(mainWindow.getCurrentDate());
+            dietManager.clearDailyLog(mainWindow.getCurrentDate()); // Use user-specific method
             refreshLog();
             mainWindow.updateUndoRedoMenuItems();
         }

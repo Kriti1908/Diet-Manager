@@ -1,4 +1,3 @@
-2025-03-28|Apple|2.0|104.0
-2025-03-28|Chicken Breast|1.0|165.0
-2025-03-28|Brown Rice|1.5|166.5
-2025-04-07|Egg salmon|1.0|280.0
+naya user|2025-04-07|Pasta|1.0|158.0
+kriti|2025-04-07|PB&J Sandwich|3.0|0.0
+kriti|2025-04-07|Egg|2.0|144.0

@@ -21,44 +21,42 @@ public class DailyLog {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     private Map<LocalDate, List<LogEntry>> entries;
+    private Map<String, Map<LocalDate, List<LogEntry>>> userEntries; // Logs per user
     
     /**
      * Constructor for DailyLog.
      */
     public DailyLog() {
-        entries = new HashMap<>();
+        userEntries = new HashMap<>();
         load();
     }
     
     /**
      * Load logs from the log file.
      */
-    private void load() {
+    public void load() {
         File file = new File(LOG_FILE);
         if (!file.exists()) {
             return;
         }
-        
+    
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
-                if (parts.length >= 4) {
-                    LocalDate date = LocalDate.parse(parts[0], DATE_FORMATTER);
-                    String foodId = parts[1];
-                    double servings = Double.parseDouble(parts[2]);
-                    double calories = Double.parseDouble(parts[3]);
-                    
-                    // Create a "placeholder" food for the log entry
-                    // The actual food details will be filled in when the food database is loaded
+                if (parts.length >= 5) {
+                    String username = parts[0];
+                    LocalDate date = LocalDate.parse(parts[1], DATE_FORMATTER);
+                    String foodId = parts[2];
+                    double servings = Double.parseDouble(parts[3]);
+                    double calories = Double.parseDouble(parts[4]);
+    
                     LogEntry entry = new LogEntry(new PlaceholderFood(foodId, calories / servings), servings);
-                    addEntry(date, entry);
+                    addEntry(username, date, entry);
                 }
             }
         } catch (IOException e) {
             System.err.println("Error loading logs: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Error parsing log data: " + e.getMessage());
         }
     }
     
@@ -66,19 +64,13 @@ public class DailyLog {
      * Save logs to the log file.
      */
     public void save() {
-        try {
-            File directory = new File("database");
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE))) {
-                for (Map.Entry<LocalDate, List<LogEntry>> dateEntry : entries.entrySet()) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE))) {
+            for (Map.Entry<String, Map<LocalDate, List<LogEntry>>> userEntry : userEntries.entrySet()) {
+                String username = userEntry.getKey();
+                for (Map.Entry<LocalDate, List<LogEntry>> dateEntry : userEntry.getValue().entrySet()) {
                     LocalDate date = dateEntry.getKey();
-                    List<LogEntry> dateEntries = dateEntry.getValue();
-                    
-                    for (LogEntry entry : dateEntries) {
-                        writer.write(date.format(DATE_FORMATTER) + "|");
+                    for (LogEntry entry : dateEntry.getValue()) {
+                        writer.write(username + "|" + date.format(DATE_FORMATTER) + "|");
                         writer.write(entry.getFood().getIdentifier() + "|");
                         writer.write(entry.getServings() + "|");
                         writer.write(String.valueOf(entry.getCalories()));
@@ -92,54 +84,55 @@ public class DailyLog {
     }
     
     /**
-     * Add an entry to the log.
+     * Add an entry to the log for a specific user.
      * 
+     * @param username The username
      * @param date The date
      * @param entry The log entry
      */
-    public void addEntry(LocalDate date, LogEntry entry) {
-        if (!entries.containsKey(date)) {
-            entries.put(date, new ArrayList<>());
-        }
-        
-        entries.get(date).add(entry);
+    public void addEntry(String username, LocalDate date, LogEntry entry) {
+        userEntries.putIfAbsent(username, new HashMap<>());
+        userEntries.get(username).putIfAbsent(date, new ArrayList<>());
+        userEntries.get(username).get(date).add(entry);
     }
     
     /**
-     * Remove an entry from the log.
+     * Remove an entry from the log for a specific user.
      * 
+     * @param username The username
      * @param date The date
      * @param entry The log entry to remove
      * @return true if the entry was removed, false otherwise
      */
-    public boolean removeEntry(LocalDate date, LogEntry entry) {
-        if (entries.containsKey(date)) {
-            return entries.get(date).remove(entry);
+    public boolean removeEntry(String username, LocalDate date, LogEntry entry) {
+        if (userEntries.containsKey(username) && userEntries.get(username).containsKey(date)) {
+            return userEntries.get(username).get(date).remove(entry);
         }
         return false;
     }
     
     /**
-     * Get entries for a specific date.
+     * Get entries for a specific user and date.
      * 
+     * @param username The username
      * @param date The date
-     * @return The list of entries for that date
+     * @return The list of entries for that user and date
      */
-    public List<LogEntry> getEntriesForDate(LocalDate date) {
-        if (!entries.containsKey(date)) {
-            entries.put(date, new ArrayList<>());
-        }
-        
-        return entries.get(date);
+    public List<LogEntry> getEntriesForUserAndDate(String username, LocalDate date) {
+        return userEntries.getOrDefault(username, new HashMap<>())
+                        .getOrDefault(date, new ArrayList<>());
     }
     
     /**
-     * Clear all entries for a specific date.
+     * Clear all entries for a specific user and date.
      * 
+     * @param username The username
      * @param date The date
      */
-    public void clearEntriesForDate(LocalDate date) {
-        entries.put(date, new ArrayList<>());
+    public void clearEntriesForUserAndDate(String username, LocalDate date) {
+        if (userEntries.containsKey(username)) {
+            userEntries.get(username).remove(date);
+        }
         save();
     }
     
