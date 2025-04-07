@@ -293,69 +293,101 @@ public class DailyLogPanel extends JPanel {
         JDialog dialog = new JDialog(mainWindow, "Add Food to Log", true);
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        
-        // Food selection
+    
+        // Food selection with search functionality
         JPanel selectionPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         selectionPanel.add(new JLabel("Select Food:"));
-        
+    
         // Get all foods for combo box
-        Object[] foods = dietManager.getFoodDatabase().getAllFoods().toArray();
-        JComboBox<Object> foodComboBox = new JComboBox<>(foods);
+        List<Food> allFoods = dietManager.getFoodDatabase().getAllFoods();
+        DefaultComboBoxModel<Food> foodModel = new DefaultComboBoxModel<>(allFoods.toArray(new Food[0]));
+        JComboBox<Food> foodComboBox = new JComboBox<>(foodModel);
+        JTextField searchField = new JTextField();
+    
+        // Add search functionality
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void filterFoods() {
+                String searchText = searchField.getText().toLowerCase();
+                foodModel.removeAllElements();
+                for (Food food : allFoods) {
+                    if (food.getIdentifier().toLowerCase().contains(searchText)) {
+                        foodModel.addElement(food);
+                    }
+                }
+            }
+    
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                filterFoods();
+            }
+    
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                filterFoods();
+            }
+    
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                filterFoods();
+            }
+        });
+    
+        selectionPanel.add(searchField);
         selectionPanel.add(foodComboBox);
-        
+    
         selectionPanel.add(new JLabel("Servings:"));
         JTextField servingsField = new JTextField("1.0");
         selectionPanel.add(servingsField);
-        
+    
         panel.add(selectionPanel, BorderLayout.CENTER);
-        
+    
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("Add");
         JButton cancelButton = new JButton("Cancel");
-        
+    
         buttonPanel.add(addButton);
         buttonPanel.add(cancelButton);
-        
+    
         panel.add(buttonPanel, BorderLayout.SOUTH);
-        
+    
         dialog.setContentPane(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(mainWindow);
-        
+    
         // Button listeners
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Food selectedFood = (Food) foodComboBox.getSelectedItem();
                 String servingsStr = servingsField.getText().trim();
-                
+    
                 try {
                     double servings = Double.parseDouble(servingsStr);
                     if (servings <= 0) {
                         throw new NumberFormatException("Servings must be positive");
                     }
-                    
+    
                     dietManager.addFoodToLog(mainWindow.getCurrentDate(), selectedFood, servings);
                     refreshLog();
                     mainWindow.updateUndoRedoMenuItems();
                     dialog.dispose();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(dialog, 
-                            "Please enter a valid positive number for servings.", 
-                            "Error", 
+                    JOptionPane.showMessageDialog(dialog,
+                            "Please enter a valid positive number for servings.",
+                            "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-        
+    
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dialog.dispose();
             }
         });
-        
+    
         dialog.setVisible(true);
     }
     
