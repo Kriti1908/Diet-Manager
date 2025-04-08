@@ -19,6 +19,8 @@ public class UIStyler {
     public static final Color DANGER_COLOR = new Color(231, 76, 60); // Red
     public static final Color LIGHT_COLOR = new Color(236, 240, 241); // Light Gray
     public static final Color DARK_COLOR = new Color(52, 73, 94); // Dark Blue/Gray
+    // In UIStyler.java
+    public static final Color INFO_COLOR = new Color(91, 192, 222);
     
     // Background colors
     public static final Color BACKGROUND_COLOR = new Color(245, 248, 250); // Very Light Gray/Blue

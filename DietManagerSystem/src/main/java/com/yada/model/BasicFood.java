@@ -1,28 +1,32 @@
+// src/main/java/com/yada/model/BasicFood.java
 package com.yada.model;
 
-/**
- * Represents a basic food item.
- */
+import java.util.HashMap;
+import java.util.Map;
+
 public class BasicFood extends Food {
     private double caloriesPerServing;
-    
-    /**
-     * Constructor for BasicFood.
-     * 
-     * @param identifier The food identifier
-     * @param keywords The keywords
-     * @param caloriesPerServing The calories per serving
-     */
+    private Map<String, Double> nutrients;
+
     public BasicFood(String identifier, String[] keywords, double caloriesPerServing) {
         super(identifier, keywords);
         this.caloriesPerServing = caloriesPerServing;
+        this.nutrients = new HashMap<>();
+        this.nutrients.put("calories", caloriesPerServing);
     }
-    
-    /**
-     * Get the calories per serving.
-     * 
-     * @return The calories per serving
-     */
+
+    public void addNutrient(String name, double amount) {
+        nutrients.put(name.toLowerCase(), amount);
+    }
+
+    public double getNutrient(String name) {
+        return nutrients.getOrDefault(name.toLowerCase(), 0.0);
+    }
+
+    public Map<String, Double> getAllNutrients() {
+        return new HashMap<>(nutrients);
+    }
+
     @Override
     public double getCaloriesPerServing() {
         return caloriesPerServing;

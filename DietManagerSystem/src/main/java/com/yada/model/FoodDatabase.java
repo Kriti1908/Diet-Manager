@@ -29,54 +29,66 @@ public class FoodDatabase {
     /**
      * Load foods from the foods file.
      */
-    private void load() {
-        File file = new File(FOODS_FILE);
-        System.out.println("Looking for food file at: " + file.getAbsolutePath()); 
-        if (!file.exists()) {
-            return;
-        }
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 4) {
-                    String type = parts[0];
-                    String identifier = parts[1];
-                    String[] keywords = parts[2].split(",");
+private void load() {
+    File file = new File(FOODS_FILE);
+    System.out.println("Looking for food file at: " + file.getAbsolutePath()); 
+    if (!file.exists()) {
+        return;
+    }
+    
+    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split("\\|");
+            if (parts.length >= 4) {
+                String type = parts[0];
+                String identifier = parts[1];
+                String[] keywords = parts[2].split(",");
+                
+                if (type.equals("BasicFood")) {
+                    double calories = Double.parseDouble(parts[3]);
+                    BasicFood food = new BasicFood(identifier, keywords, calories);
                     
-                    if (type.equals("BasicFood")) {
-                        double calories = Double.parseDouble(parts[3]);
-                        BasicFood food = new BasicFood(identifier, keywords, calories);
-                        foods.put(identifier, food);
-                    } else if (type.equals("CompositeFood")) {
-                        CompositeFood food = new CompositeFood(identifier, keywords);
-                        String[] componentParts = parts[3].split(",");
-                        
-                        for (String componentPart : componentParts) {
-                            String[] componentInfo = componentPart.split(":");
-                            if (componentInfo.length == 2) {
-                                String componentIdentifier = componentInfo[0];
-                                double servings = Double.parseDouble(componentInfo[1]);
-                                
-                                // Add component if it exists
-                                Food component = foods.get(componentIdentifier);
-                                if (component != null) {
-                                    food.addComponent(component, servings);
-                                }
+                    // Parse additional nutrients if present (new format)
+                    if (parts.length > 4) {
+                        String[] nutrientPairs = parts[4].split(",");
+                        for (String pair : nutrientPairs) {
+                            String[] kv = pair.split("=");
+                            if (kv.length == 2) {
+                                food.addNutrient(kv[0], Double.parseDouble(kv[1]));
                             }
                         }
-                        
-                        foods.put(identifier, food);
                     }
+                    
+                    foods.put(identifier, food);
+                } else if (type.equals("CompositeFood")) {
+                    // Existing composite food handling remains unchanged
+                    CompositeFood food = new CompositeFood(identifier, keywords);
+                    String[] componentParts = parts[3].split(",");
+                    
+                    for (String componentPart : componentParts) {
+                        String[] componentInfo = componentPart.split(":");
+                        if (componentInfo.length == 2) {
+                            String componentIdentifier = componentInfo[0];
+                            double servings = Double.parseDouble(componentInfo[1]);
+                            
+                            Food component = foods.get(componentIdentifier);
+                            if (component != null) {
+                                food.addComponent(component, servings);
+                            }
+                        }
+                    }
+                    
+                    foods.put(identifier, food);
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Error loading foods: " + e.getMessage());
-        } catch (NumberFormatException e) {
-            System.err.println("Error parsing food data: " + e.getMessage());
         }
+    } catch (IOException e) {
+        System.err.println("Error loading foods: " + e.getMessage());
+    } catch (NumberFormatException e) {
+        System.err.println("Error parsing food data: " + e.getMessage());
     }
+}
     
     /**
      * Save foods to the foods file.
@@ -91,10 +103,21 @@ public class FoodDatabase {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(FOODS_FILE))) {
                 for (Food food : foods.values()) {
                     if (food instanceof BasicFood) {
+                        BasicFood bf = (BasicFood) food;  // Add this line
                         writer.write("BasicFood|");
                         writer.write(food.getIdentifier() + "|");
                         writer.write(String.join(",", food.getKeywords()) + "|");
                         writer.write(String.valueOf(food.getCaloriesPerServing()));
+                        
+                        Map<String, Double> nutrients = bf.getAllNutrients();
+                        nutrients.remove("calories");
+                        if (!nutrients.isEmpty()) {
+                            writer.write("|");
+                            writer.write(nutrients.entrySet().stream()
+                                .map(e -> e.getKey() + "=" + e.getValue())
+                                .collect(java.util.stream.Collectors.joining(",")));
+                        }
+                        
                         writer.newLine();
                     } else if (food instanceof CompositeFood) {
                         CompositeFood compositeFood = (CompositeFood) food;

@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+// import com.yada.util.FoodImportManager;
+// import com.yada.util.FoodImportException;
+
 /**
  * Main class for the diet management application.
  */
@@ -24,7 +27,7 @@ public class DietManager {
     private Stack<Command> undoStack;
     private Stack<Command> redoStack;
     private User currentUser;
-
+    // private final FoodImportManager foodImportManager;
 
     
     
@@ -39,6 +42,7 @@ public class DietManager {
         undoStack = new Stack<>();
         redoStack = new Stack<>();
         currentUser = null;
+        // this.foodImportManager = new FoodImportManager();
 
 
         // Debug output
@@ -233,6 +237,26 @@ public class DietManager {
         }
         dailyLog.clearEntriesForUserAndDate(currentUser.getUsername(), date); // Use user-specific method
     }
+
+
+    /**
+     * Import food data from external sources
+     * 
+     * @param source The data source identifier (e.g., "usda", "mcdonalds")
+     * @param query The search query
+     * @return List of imported foods
+     * @throws FoodImportException if import fails
+     */
+    // public List<BasicFood> importFoodData(String source, String query) throws FoodImportException {
+    //     List<BasicFood> importedFoods = foodImportManager.importFromSource(source, query);
+
+    //     // Auto-add imported foods to database
+    //     for (BasicFood food : importedFoods) {
+    //         foodDatabase.addFood(food);
+    //     }
+
+    //     return importedFoods;
+    // }
     
     /**
      * Undo the last command.
@@ -248,6 +272,15 @@ public class DietManager {
         }
         return false;
     }
+
+    /**
+     * Get the food import manager
+     * 
+     * @return The food import manager instance
+     */
+    // public FoodImportManager getFoodImportManager() {
+    //     return foodImportManager;
+    // }
     
     /**
      * Redo the last undone command.

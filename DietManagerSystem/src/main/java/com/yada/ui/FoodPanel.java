@@ -16,6 +16,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.JLabel;
+
+import com.yada.model.BasicFood;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Panel for displaying and manipulating foods.
@@ -74,6 +80,12 @@ public class FoodPanel extends JPanel {
         inputPanel.setOpaque(false);
         searchField = new RoundTextField(15);
         searchButton = new RoundButton("Search");
+
+        // Add to actionPanel initialization:
+        // JButton viewNutrientsButton = new RoundButton("View Nutrients", 
+        //         UIStyler.INFO_COLOR, new Color(91, 192, 222),
+        //         new Color(49, 176, 213), Color.WHITE);
+        // actionPanel.add(viewNutrientsButton);
         
         JLabel keywordsLabel = UIStyler.styleLabel(new JLabel("Keywords: "));
         keywordsLabel.setBorder(new EmptyBorder(0, 0, 0, 5)); // Add some spacing
@@ -149,10 +161,16 @@ public class FoodPanel extends JPanel {
         createCompositeButton = new RoundButton("Create Composite Food", 
                 UIStyler.WARNING_COLOR, new Color(230, 126, 34), 
                 new Color(211, 84, 0), Color.WHITE);
+
+        // Add View Nutrients button here
+        JButton viewNutrientsButton = new RoundButton("View Nutrients", 
+                UIStyler.INFO_COLOR, new Color(91, 192, 222),
+                new Color(49, 176, 213), Color.WHITE);        
         
         actionPanel.add(addFoodButton);
         actionPanel.add(addToLogButton);
         actionPanel.add(createCompositeButton);
+        actionPanel.add(viewNutrientsButton);  // Add this line
         
         actionRoundPanel.add(actionPanel);
         add(actionRoundPanel, BorderLayout.SOUTH);
@@ -163,6 +181,22 @@ public class FoodPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String keywords = searchField.getText().trim();
                 refreshFoods(keywords.isEmpty() ? null : keywords);
+            }
+        });
+
+        // Add listener:
+        viewNutrientsButton.addActionListener(e -> {
+            int row = foodTable.getSelectedRow();
+            if (row >= 0) {
+                String foodName = (String) tableModel.getValueAt(row, 0);
+                Food food = dietManager.getFoodDatabase().getFoodByIdentifier(foodName);
+                if (food instanceof BasicFood) {
+                    showNutrientDialog((BasicFood) food);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Nutrition information is only available for basic foods.",
+                            "Info", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
         
@@ -401,6 +435,47 @@ public class FoodPanel extends JPanel {
             }
         });
         
+        dialog.setVisible(true);
+    }
+
+    // Add new method:
+    private void showNutrientDialog(BasicFood food) {
+        JDialog dialog = new JDialog(mainWindow, "Nutrition Facts: " + food.getIdentifier(), true);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        // Create table for nutrients
+        String[] columns = {"Nutrient", "Amount per Serving"};
+        Map<String, Double> nutrients = food.getAllNutrients();
+        Object[][] data = nutrients.entrySet().stream()
+            .map(e -> new Object[]{e.getKey(), e.getValue()})
+            .toArray(Object[][]::new);
+
+        JTable table = new JTable(data, columns);
+        table.setFont(UIStyler.BODY_FONT);
+        table.setRowHeight(25);
+
+        // Right-align numeric values
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        table.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
+
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        // Add close button
+        JButton closeButton = new RoundButton("Close", 
+                UIStyler.LIGHT_COLOR, new Color(225, 229, 234),
+                new Color(213, 216, 220), UIStyler.TEXT_PRIMARY_COLOR);
+        closeButton.addActionListener(e -> dialog.dispose());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(closeButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.setContentPane(panel);
+        dialog.pack();
+        dialog.setSize(300, 400);
+        dialog.setLocationRelativeTo(mainWindow);
         dialog.setVisible(true);
     }
     
