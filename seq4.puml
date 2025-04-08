@@ -1,18 +1,36 @@
 @startuml uc8
-actor System
-participant "User Profile" as Profile
-participant "Calorie Calculation" as Calculator
+actor User
+participant "ProfileDialog" as PD
+participant "DietManager" as DM
+participant "UserProfile" as UP
 
-System -> Profile : Retrieve user profile data
-activate Profile
+User -> PD : Open profile
+activate PD
 
-Profile --> System : Return profile information
-System -> Calculator : Calculate target calorie intake
-activate Calculator
+PD -> DM : getUserProfile()
+activate DM
+DM --> PD : return profile
+deactivate DM
 
-Calculator --> System : Compute recommended intake
-System --> System : Display calculated intake
-deactivate Calculator
-deactivate Profile
+PD --> User : Display current profile
+
+User -> PD : Update profile data
+activate PD
+
+PD -> DM : updateUserProfile(gender, height, weight, age, activityLevel, calculationMethod)
+activate DM
+
+DM -> UP : update profile data
+activate UP
+
+UP -> UP : calculateDailyCalories()
+UP --> DM : return new calorie target
+
+DM --> PD : update successful
+PD --> User : Show updated target calories
+
+deactivate UP
+deactivate DM
+deactivate PD
 
 @enduml

@@ -1,20 +1,38 @@
+
 @startuml uc2
 actor User
-participant "System" as System
+participant "MainWindow" as UI
+participant "DietManager" as DM
+participant "FoodDatabase" as DB
+participant "CompositeFood" as CF
 
-User -> System : Select option to add composite food
-activate System
+User -> UI : Select option to add composite food
+activate UI
 
-System --> User : Display list of available food items
-User -> System : Select multiple food items and servings
-activate System
+UI -> DM : searchFoods(keywords)
+activate DM
+DM -> DB : searchFoods(keywords)
+DB --> DM : return matching foods
+DM --> UI : return food list
+UI --> User : Display available food items
 
-System -> System : Calculate total caloric value
-System --> User : Prompt for identifier and keywords
-User -> System : Provide details
-System -> System : Save composite food to database
-System --> User : Confirm successful addition
-deactivate System
-deactivate System
+User -> UI : Select foods and servings
+UI -> CF : create new CompositeFood()
+activate CF
+
+loop for each selected food
+    UI -> CF : addComponent(food, servings)
+end
+
+User -> UI : Provide identifier and keywords
+UI -> DM : addFood(compositeFood)
+DM -> DB : addFood(compositeFood)
+DB --> DM : confirm addition
+DM --> UI : success status
+UI --> User : Confirm successful addition
+
+deactivate CF
+deactivate DM
+deactivate UI
 
 @enduml

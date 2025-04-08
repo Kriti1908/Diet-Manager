@@ -1,0 +1,192 @@
+
+@startuml DietManagerSystem
+
+' Style configurations
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+' Abstract Classes and Interfaces
+abstract class Food {
+  -identifier: String
+  -keywords: String[]
+  +getCalories(): double
+  +{abstract} calculateCalories(): double
+  +getIdentifier(): String
+  +getKeywords(): String[]
+}
+
+abstract class Command {
+  +execute(): void
+  +undo(): void
+}
+
+' Core Classes
+class DietManager {
+  -userManager: UserManager
+  -userProfile: UserProfile
+  -foodDatabase: FoodDatabase
+  -dailyLog: DailyLog
+  -undoStack: Stack<Command>
+  -redoStack: Stack<Command>
+  -currentUser: User
+  +setCurrentUser(user: User)
+  +updateUserProfile(gender: String, height: double, weight: double, age: int, activityLevel: String, calculationMethod: String)
+  +addFoodToLog(date: LocalDate, food: Food, servings: double)
+  +removeFoodFromLog(date: LocalDate, index: int)
+  +getDailyLogEntries(date: LocalDate): List<LogEntry>
+  +clearDailyLog(date: LocalDate)
+  +searchFoods(keywords: String): List<Food>
+  +undo(): boolean
+  +redo(): boolean
+  +getCaloriesConsumed(date: LocalDate): double
+  +getTargetCalories(): double
+  +getRemainingCalories(date: LocalDate): double
+}
+
+class BasicFood {
+  -caloriesPerServing: double
+  +calculateCalories(): double
+  +getCaloriesPerServing(): double
+}
+
+class CompositeFood {
+  -components: Map<Food, Double>
+  +addComponent(food: Food, servings: double)
+  +calculateCalories(): double
+  +getComponents(): Map<Food, Double>
+}
+
+class UserProfile {
+  -username: String
+  -gender: String
+  -height: double
+  -weight: double
+  -age: int
+  -activityLevel: String
+  -calorieCalculationMethod: String
+  +calculateDailyCalories(): double
+  +save(): void
+  +load(): void
+}
+
+class DailyLog {
+  -entries: Map<String, List<LogEntry>>
+  +addEntry(username: String, date: LocalDate, entry: LogEntry)
+  +removeEntry(username: String, date: LocalDate, index: int)
+  +getEntriesForUserAndDate(username: String, date: LocalDate): List<LogEntry>
+  +clearEntriesForUserAndDate(username: String, date: LocalDate)
+  +save(): void
+  +load(): void
+}
+
+class LogEntry {
+  -food: Food
+  -servings: double
+  -date: LocalDate
+  +getCalories(): double
+  +getFood(): Food
+  +getServings(): double
+  +getDate(): LocalDate
+}
+
+class User {
+  -username: String
+  -passwordHash: String
+  +authenticate(password: String): boolean
+  +getUsername(): String
+}
+
+class UserManager {
+  -users: Map<String, User>
+  +addUser(username: String, password: String): boolean
+  +authenticateUser(username: String, password: String): User
+  +save(): void
+  +load(): void
+}
+
+class FoodDatabase {
+  -foods: Map<String, Food>
+  +addFood(food: Food): boolean
+  +searchFoods(keywords: String): List<Food>
+  +getAllFoods(): List<Food>
+  +save(): void
+  +load(): void
+}
+
+' UI Classes
+class MainWindow {
+  -dietManager: DietManager
+  -currentDate: LocalDate
+  -mainPanel: JPanel
+  -tabbedPane: JTabbedPane
+  +showLoginDialog()
+  +refreshDisplay()
+}
+
+class FoodPanel {
+  -dietManager: DietManager
+  -mainWindow: MainWindow
+  -foodTable: JTable
+  +refreshFoods(query: String)
+}
+
+class DailyLogPanel {
+  -dietManager: DietManager
+  -mainWindow: MainWindow
+  -logTable: JTable
+  +refreshLog()
+}
+
+class ProfileDialog {
+  -dietManager: DietManager
+  -isNewUser: boolean
+  -profileSaved: boolean
+  +saveProfile()
+}
+
+' Command Pattern Classes
+class AddFoodCommand {
+  -dailyLog: DailyLog
+  -username: String
+  -date: LocalDate
+  -food: Food
+  -servings: double
+}
+
+class RemoveFoodCommand {
+  -dailyLog: DailyLog
+  -username: String
+  -date: LocalDate
+  -entry: LogEntry
+}
+
+' Relationships
+DietManager *-- UserManager
+DietManager *-- UserProfile
+DietManager *-- FoodDatabase
+DietManager *-- DailyLog
+DietManager o-- User
+DietManager *-- "0..*" Command
+
+Food <|-- BasicFood
+Food <|-- CompositeFood
+CompositeFood o-- "1..*" Food
+
+Command <|-- AddFoodCommand
+Command <|-- RemoveFoodCommand
+
+DailyLog *-- "0..*" LogEntry
+LogEntry o-- Food
+
+MainWindow *-- DietManager
+MainWindow *-- FoodPanel
+MainWindow *-- DailyLogPanel
+
+FoodPanel -- FoodDatabase
+DailyLogPanel -- DailyLog
+
+UserManager -- "0..*" User
+ProfileDialog -- UserProfile
+
+@enduml

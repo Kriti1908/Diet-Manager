@@ -1,19 +1,41 @@
 @startuml uc6
 actor User
-participant "System" as System
+participant "MainWindow" as UI
+participant "DailyLogPanel" as DLP
+participant "DietManager" as DM
+participant "DailyLog" as DL
 
-User -> System : Select "View Log" option
-activate System
+User -> UI : Select "Daily Log" tab
+activate UI
 
-System --> User : Display logged food entries for selected date
-User -> System : Select an entry to update
-activate System
+UI -> DLP : refreshLog()
+activate DLP
 
-System --> User : Present selected entry for modification
-User -> System : Modify food item or servings
-System -> System : Update log entry
-System --> User : Confirm update
-deactivate System
-deactivate System
+DLP -> DM : getDailyLogEntries(date)
+activate DM
+
+DM -> DL : getEntriesForUserAndDate(username, date)
+activate DL
+DL --> DM : return entries
+deactivate DL
+
+DM --> DLP : return entries
+deactivate DM
+
+DLP --> UI : update display
+UI --> User : Show log entries
+
+User -> DLP : Select entry to modify
+DLP --> User : Show modification options
+
+User -> DLP : Update entry details
+DLP -> DM : updateLogEntry(date, entry)
+DM -> DL : updateEntry(username, date, entry)
+DL --> DM : confirm update
+DM --> DLP : update successful
+DLP --> User : Confirm update
+
+deactivate DLP
+deactivate UI
 
 @enduml

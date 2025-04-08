@@ -1,32 +1,61 @@
+
 @startuml uc3and4
 actor User
-participant "System" as System
-database "Database" as DB
+participant "MainWindow" as UI
+participant "DietManager" as DM
+participant "FoodDatabase" as FDB
+participant "UserManager" as UM
+participant "DailyLog" as DL
 
 title Database Saving Scenarios
 
 == Manual Database Save ==
-User -> System : Select "Save Database" option
-activate System
+User -> UI : Select "Save" option
+activate UI
 
-System -> DB : Write current database state to file
-activate DB
+UI -> DM : save()
+activate DM
 
-DB --> System : Confirm save operation
-System --> User : Confirm successful saving
-deactivate DB
-deactivate System
+par Database Saves
+    DM -> FDB : save()
+    activate FDB
+    FDB --> DM : confirm save
+    deactivate FDB
+also
+    DM -> UM : save()
+    activate UM
+    UM --> DM : confirm save
+    deactivate UM
+also
+    DM -> DL : save()
+    activate DL
+    DL --> DM : confirm save
+    deactivate DL
+end
 
-== Automatic Save on Program Termination ==
-System -> System : Detect program termination
-activate System
+DM --> UI : all saves completed
+UI --> User : Confirm successful saving
 
-System -> DB : Save current database state
-activate DB
+deactivate DM
+deactivate UI
 
-DB --> System : Confirm database saved
-System -> System : Complete shutdown process
-deactivate DB
-deactivate System
+== Automatic Save on Exit ==
+User -> UI : Close application
+activate UI
+
+UI -> DM : save()
+activate DM
+
+par Database Saves
+    DM -> FDB : save()
+    DM -> UM : save()
+    DM -> DL : save()
+end
+
+DM --> UI : saves completed
+UI --> User : Exit application
+
+deactivate DM
+deactivate UI
 
 @enduml
