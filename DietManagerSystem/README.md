@@ -105,16 +105,6 @@ YADA is a Java-based diet management application designed to help users track fo
 If you encounter compilation errors, ensure you're compiling the files in the correct order as mentioned above. The application has dependencies between packages that require a specific compilation sequence.
 
 
-## Github
-```echo "DietManagerSystem/bin/" >> .gitignore```
-```echo "*.class" >> .gitignore```
-```git rm --cached -r DietManagerSystem/bin/```
-```git add DietManagerSystem/src/```
-```git add DietManagerSystem/database/```
-```git commit -m "Update Java source files and database entries"```
-```git pull origin main --rebase```
-```git push origin main```
-
 
 
 
