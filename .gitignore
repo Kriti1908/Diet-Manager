@@ -5,3 +5,5 @@ DietManagerSystem/bin/
 /DietManagerSystem/bin/
 DietManagerSystem/bin/
 *.class
+DietManagerSystem/bin/
+*.class

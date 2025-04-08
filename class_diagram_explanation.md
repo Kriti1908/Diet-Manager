@@ -1,4 +1,4 @@
-# This is for `CLAUDE_UML`
+# This is for `UML CLASS DIAGRAM`
 
 ## Food Hierarchy
 
