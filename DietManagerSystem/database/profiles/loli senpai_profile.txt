@@ -1,0 +1,8 @@
+#YADA User Profile for loli senpai
+#Tue Apr 08 14:15:12 IST 2025
+activityLevel=light
+age=22
+calorieCalculationMethod=Mifflin-St Jeor
+gender=female
+height=145.0
+weight=47.0

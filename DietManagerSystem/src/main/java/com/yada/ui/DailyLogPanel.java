@@ -446,8 +446,13 @@ public class DailyLogPanel extends JPanel {
                 JOptionPane.YES_NO_OPTION);
     
         if (option == JOptionPane.YES_OPTION) {
-            dietManager.clearDailyLog(mainWindow.getCurrentDate()); // Use user-specific method
+            // Clear the log for the current date
+            dietManager.clearDailyLog(mainWindow.getCurrentDate());
+    
+            // Refresh the log display
             refreshLog();
+    
+            // Update the undo/redo menu items
             mainWindow.updateUndoRedoMenuItems();
         }
     }

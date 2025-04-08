@@ -228,6 +228,7 @@ public class DietManager {
 
     /**
      * Clear the daily log for the current user and date.
+     * This operation clears all entries for the specified date and resets the undo/redo stacks.
      * 
      * @param date The date
      */
@@ -235,7 +236,16 @@ public class DietManager {
         if (currentUser == null) {
             throw new IllegalStateException("No user is logged in.");
         }
-        dailyLog.clearEntriesForUserAndDate(currentUser.getUsername(), date); // Use user-specific method
+
+        // Clear the entries for the current user and date
+        dailyLog.clearEntriesForUserAndDate(currentUser.getUsername(), date);
+
+        // Clear the undo and redo stacks
+        undoStack.clear();
+        redoStack.clear();
+
+        // Save the updated log
+        dailyLog.save();
     }
 
 

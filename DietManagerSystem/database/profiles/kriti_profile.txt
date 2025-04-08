@@ -1,5 +1,5 @@
 #YADA User Profile for kriti
-#Sat Mar 29 13:15:33 IST 2025
+#Tue Apr 08 12:27:56 IST 2025
 activityLevel=sedentary
 age=19
 calorieCalculationMethod=Harris-Benedict
